@@ -105,16 +105,16 @@
   </div>
 </div>
 <div class="tabs">
-  <button class="tab-btn active" onclick="showTab('today',event)">Today's Digest</button>
-  <button class="tab-btn" onclick="showTab('tier1',event)">Tier 1</button>
-  <button class="tab-btn" onclick="showTab('tier23',event)">Tier 2 &amp; 3</button>
-  <button class="tab-btn policy-tab" onclick="showTab('policy',event)">📋 Policy</button>
-  <button class="tab-btn cj-tab" onclick="showTab('cj',event)">⚖️ Criminal Justice</button>
-  <button class="tab-btn kennedy-tab" onclick="showTab('kennedy',event)">🎯 All Eyez on Kennedy</button>
-  <button class="tab-btn geo" onclick="showTab('bayarea',event)">🌉 Bay Area</button>
-  <button class="tab-btn geo" onclick="showTab('chicago',event)">🏙 Chicago</button>
-  <button class="tab-btn geo" onclick="showTab('newyork',event)">🗽 New York</button>
-  <button class="tab-btn" onclick="showTab('map',event)">🗺 Legislation</button>
+  <button class="tab-btn active" data-tab="today">Today's Digest</button>
+  <button class="tab-btn" data-tab="tier1">Tier 1</button>
+  <button class="tab-btn" data-tab="tier23">Tier 2 &amp; 3</button>
+  <button class="tab-btn policy-tab" data-tab="policy">📋 Policy</button>
+  <button class="tab-btn cj-tab" data-tab="cj">⚖️ Criminal Justice</button>
+  <button class="tab-btn kennedy-tab" data-tab="kennedy">🎯 All Eyez on Kennedy</button>
+  <button class="tab-btn geo" data-tab="bayarea">🌉 Bay Area</button>
+  <button class="tab-btn geo" data-tab="chicago">🏙 Chicago</button>
+  <button class="tab-btn geo" data-tab="newyork">🗽 New York</button>
+  <button class="tab-btn" data-tab="map">🗺 Legislation</button>
 </div>
 <div class="container">
   <div id="tab-today" class="panel active">
@@ -144,22 +144,22 @@
   <div id="tab-cj" class="panel">
     <div class="section-label">⚖️ Criminal Justice</div>
     <div class="filter-row" id="cj-type-chips">
-      <button class="chip active" onclick="setCjFilter('type','all',this)">All Types</button>
-      <button class="chip" onclick="setCjFilter('type','news',this)">📰 News</button>
-      <button class="chip" onclick="setCjFilter('type','research',this)">🔬 Research</button>
-      <button class="chip" onclick="setCjFilter('type','policy',this)">📋 Policy</button>
-      <button class="chip" onclick="setCjFilter('type','commentary',this)">💬 Commentary</button>
+      <button class="chip active" data-filter-dim="type" data-filter-val="all">All Types</button>
+      <button class="chip" data-filter-dim="type" data-filter-val="news">📰 News</button>
+      <button class="chip" data-filter-dim="type" data-filter-val="research">🔬 Research</button>
+      <button class="chip" data-filter-dim="type" data-filter-val="policy">📋 Policy</button>
+      <button class="chip" data-filter-dim="type" data-filter-val="commentary">💬 Commentary</button>
     </div>
     <div class="filter-divider"></div>
     <div class="filter-row" id="cj-topic-chips">
-      <button class="chip active" onclick="setCjFilter('topic','all',this)">All Topics</button>
-      <button class="chip" onclick="setCjFilter('topic','youth',this)">Youth</button>
-      <button class="chip" onclick="setCjFilter('topic','incarceration',this)">Incarceration</button>
-      <button class="chip" onclick="setCjFilter('topic','police',this)">Police</button>
-      <button class="chip" onclick="setCjFilter('topic','courts',this)">Courts</button>
-      <button class="chip" onclick="setCjFilter('topic','solitary',this)">Solitary</button>
-      <button class="chip" onclick="setCjFilter('topic','illinois',this)">Illinois</button>
-      <button class="chip" onclick="setCjFilter('topic','reform',this)">Reform</button>
+      <button class="chip active" data-filter-dim="topic" data-filter-val="all">All Topics</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="youth">Youth</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="incarceration">Incarceration</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="police">Police</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="courts">Courts</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="solitary">Solitary</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="illinois">Illinois</button>
+      <button class="chip" data-filter-dim="topic" data-filter-val="reform">Reform</button>
     </div>
     <div id="cj-list" style="margin-top:16px;"></div>
   </div>
@@ -184,12 +184,12 @@
     <div class="map-wrap">
       <div class="map-col">
         <div class="map-controls">
-          <select id="mapStatusFilter" onchange="applyMapFilters()">
+          <select id="mapStatusFilter">
             <option value="all">All bills</option>
             <option value="enacted">Enacted only</option>
             <option value="proposed">Proposed only</option>
           </select>
-          <select id="mapTopicFilter" onchange="applyMapFilters()">
+          <select id="mapTopicFilter">
             <option value="all">All topics</option>
             <option>Parity & Insurance</option>
             <option>Behavioral Health System</option>
@@ -268,7 +268,7 @@ let mapStatusF='all',mapTopicF='all',mapSelState=null,mapBuilt=false;
 function mapBgColor(n){if(n===0)return'#e5e7eb';if(n===1)return'#dbeafe';if(n<=3)return'#93c5fd';if(n<=5)return'#3b82f6';if(n<=8)return'#1d4ed8';return'#1e3a8a';}
 function mapTextColor(n){return n>=4?'#ffffff':'#1e3a8a';}
 function mapFiltered(code){return MAP_BILLS.filter(b=>{if(b.code!==code)return false;if(mapStatusF==='enacted'&&b.proposed)return false;if(mapStatusF==='proposed'&&!b.proposed)return false;if(mapTopicF!=='all'&&b.topic!==mapTopicF)return false;return true;});}
-function buildMap(){mapBuilt=true;const grid=document.getElementById('tileGrid');grid.innerHTML='';Object.keys(MAP_GRID).forEach(code=>{const[col,row]=MAP_GRID[code];const bills=mapFiltered(code);const n=bills.length;const hasPending=MAP_BILLS.some(b=>b.code===code&&b.proposed);const tile=document.createElement('div');tile.className='map-tile'+(mapSelState===code?' sel':'');tile.style.cssText=`grid-column:${col+1};grid-row:${row+1};background:${mapBgColor(n)};color:${mapTextColor(n)}`;tile.dataset.code=code;tile.title=`${MAP_STATE_NAMES[code]||code}: ${n} bill(s)`;tile.innerHTML=code+(hasPending?'<span class="map-pdot">●</span>':'')+(n>0?`<div class="map-tile-cnt">${n}</div>`:'');tile.onclick=()=>selectMapState(code);grid.appendChild(tile);});updateMapStats();}
+function buildMap(){mapBuilt=true;const grid=document.getElementById('tileGrid');grid.innerHTML='';Object.keys(MAP_GRID).forEach(code=>{const[col,row]=MAP_GRID[code];const bills=mapFiltered(code);const n=bills.length;const hasPending=MAP_BILLS.some(b=>b.code===code&&b.proposed);const tile=document.createElement('div');tile.className='map-tile'+(mapSelState===code?' sel':'');tile.style.cssText=`grid-column:${col+1};grid-row:${row+1};background:${mapBgColor(n)};color:${mapTextColor(n)}`;tile.dataset.code=code;tile.title=`${MAP_STATE_NAMES[code]||code}: ${n} bill(s)`;tile.innerHTML=code+(hasPending?'<span class="map-pdot">●</span>':'')+(n>0?`<div class="map-tile-cnt">${n}</div>`:'');tile.addEventListener('click',()=>selectMapState(code));grid.appendChild(tile);});updateMapStats();}
 function applyMapFilters(){mapStatusF=document.getElementById('mapStatusFilter').value;mapTopicF=document.getElementById('mapTopicFilter').value;buildMap();if(mapSelState)renderMapDetail(mapSelState);}
 function updateMapStats(){const total=MAP_BILLS.filter(b=>{if(mapStatusF==='enacted'&&b.proposed)return false;if(mapStatusF==='proposed'&&!b.proposed)return false;if(mapTopicF!=='all'&&b.topic!==mapTopicF)return false;return true;}).length;const enacted=MAP_BILLS.filter(b=>!b.proposed).length;const proposed=MAP_BILLS.filter(b=>b.proposed).length;document.getElementById('mapStats').innerHTML=mapStatusF==='all'&&mapTopicF==='all'?`<strong>${total}</strong> bills · <strong>${enacted}</strong> enacted · <strong>${proposed}</strong> proposed`:`<strong>${total}</strong> bills shown (filtered)`;}
 function selectMapState(code){mapSelState=code;document.querySelectorAll('.map-tile').forEach(t=>t.classList.toggle('sel',t.dataset.code===code));renderMapDetail(code);}
@@ -276,6 +276,16 @@ function renderMapDetail(code){const bills=mapFiltered(code);document.getElement
 // Patch showTab to lazy-build map on first view
 const _origShowTab=showTab;
 function showTab(name,ev){_origShowTab(name,ev);if(name==='map'&&!mapBuilt)buildMap();}
+// Wire up all interactive controls via addEventListener (inline onclick/onchange attributes
+// are stripped by the artifact sandbox's CSP, so every button must be bound here instead).
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(e){ showTab(btn.dataset.tab, e); });
+});
+document.querySelectorAll('.chip').forEach(function(btn){
+  btn.addEventListener('click', function(e){ setCjFilter(btn.dataset.filterDim, btn.dataset.filterVal, e.currentTarget); });
+});
+document.getElementById('mapStatusFilter').addEventListener('change', applyMapFilters);
+document.getElementById('mapTopicFilter').addEventListener('change', applyMapFilters);
 </script>
 </body>
 </html>
